@@ -1,15 +1,15 @@
 package msm_backend.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int CourseId;
+    @Column(unique=true)
+    private String CourseSkyID;
     private String CourseName;
     private String CourseType;
     private String CourseSection;
@@ -20,6 +20,7 @@ public class Course {
     private String CourseInstructor;
     private String CourseFinal;
     private String Remark;
+
     public int getCourseId(){
         return this.CourseId;
     }
@@ -115,5 +116,13 @@ public class Course {
 
     public void setRemark(String remark) {
         Remark = remark;
+    }
+
+    public String getCourseSkyID() {
+        return CourseSkyID;
+    }
+
+    public void setCourseSkyID(String courseSkyID) {
+        CourseSkyID = courseSkyID;
     }
 }
