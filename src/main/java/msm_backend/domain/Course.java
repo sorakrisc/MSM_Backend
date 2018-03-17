@@ -20,7 +20,6 @@ public class Course {
     private String CourseInstructor;
     private String CourseFinal;
     private String Remark;
-
     public int getCourseId(){
         return this.CourseId;
     }

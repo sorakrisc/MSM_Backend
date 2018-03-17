@@ -18,6 +18,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
+//@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/course")
 public class CourseController {
 
@@ -27,8 +28,8 @@ public class CourseController {
     @Autowired
     private PlanRepo planrp;
 
-    @Autowired
-    private UserRepo userrp;
+//    @Autowired
+//    private UserRepo userrp;
 
     @RequestMapping("/findall")
     @ResponseBody
@@ -59,29 +60,29 @@ public class CourseController {
         private static final long serialVersionUID = 1L;
     }
 
-    @RequestMapping("/test")
-    @ResponseBody
-    void test(){
-        //Cleanup db tables
-        userrp.deleteAllInBatch();
-        planrp.deleteAllInBatch();
-        System.out.println("HELLO");
-
-        User u = new User("james", "cos@g.com","password123");
-        System.out.println("hi");
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        Plan p1 = new Plan(timestamp.toString());
-        p1.setUser(u);
-        Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());
-        Plan p2 = new Plan(timestamp2.toString());
-        p2.setUser(u);
-        System.out.println("yo");
-        u.getPlans().add(p1);
-        u.getPlans().add(p2);
-
-        userrp.save(u);
-        System.out.println("done");
-    }
+//    @RequestMapping("/test")
+//    @ResponseBody
+//    void test(){
+//        //Cleanup db tables
+//        userrp.deleteAllInBatch();
+//        planrp.deleteAllInBatch();
+//        System.out.println("HELLO");
+//
+//        User u = new User("james", "cos@g.com","password123");
+//        System.out.println("hi");
+//        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//        Plan p1 = new Plan(timestamp.toString());
+//        p1.setUser(u);
+//        Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());
+//        Plan p2 = new Plan(timestamp2.toString());
+//        p2.setUser(u);
+//        System.out.println("yo");
+//        u.getPlans().add(p1);
+//        u.getPlans().add(p2);
+//
+//        userrp.save(u);
+//        System.out.println("done");
+//    }
     @RequestMapping("/test1")
     @ResponseBody
     void test1(){
@@ -93,7 +94,7 @@ public class CourseController {
     @RequestMapping("/clear")
     @ResponseBody
     void clear(){
-        rp.deleteAllInBatch();
+        rp.deleteAllInBatch();;
     }
 
 }
