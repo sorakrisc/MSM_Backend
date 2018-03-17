@@ -40,7 +40,6 @@ public class UserController {
         return ResponseEntity.ok(ret);
     }
 
-    
     @RequestMapping(value="/register/{username}/{email}/{password}", method=RequestMethod.POST)
     @ResponseBody
     void register(@PathVariable("username") String username,

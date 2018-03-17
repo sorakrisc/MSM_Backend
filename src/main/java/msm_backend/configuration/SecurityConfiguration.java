@@ -52,7 +52,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //                .accessDeniedPage("/access-denied");        http
 
                 .authorizeRequests()
-                .antMatchers("/login", "/logout", "/user/register").permitAll()
+                .antMatchers("/login", "/logout", "/user/register/**").permitAll()
                 .antMatchers("/**").authenticated()
                 .and()
                 .formLogin().loginProcessingUrl("/login")
@@ -75,8 +75,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(new AuthHandler());
-    }
 }
