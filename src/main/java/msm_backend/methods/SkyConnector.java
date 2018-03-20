@@ -8,58 +8,42 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class SkyConnector {
 
-    public boolean getOpenSectionCourses(String url){
-        try{
-            System.out.println("conecting to skyos");
-            org.jsoup.nodes.Document doc = Jsoup.connect(url).get();
-            org.jsoup.select.Elements rows = doc.select("tr");
-            PrintWriter out = new PrintWriter(new FileWriter("CurrentCourses.txt", false), true);
-            for(org.jsoup.nodes.Element row :rows)
-            {
-                org.jsoup.select.Elements columns = row.select("td");
-                for (org.jsoup.nodes.Element column:columns)
-                {
-                    out.write(column.text());
-                    out.write("|");
-                }
-                out.write("\n");
-            }
-            out.close();
-            return true;
-        } catch (IOException e){
-            System.out.println(e);
-            return false;
-        }
-    }
-    public boolean getOpenSectionCourses2(String url, CourseRepo courserp){
+    public boolean getOpenSectionCourses(String url, CourseRepo courserp, String termid){
         try {
             System.out.println("connecting to skyos");
             org.jsoup.nodes.Document doc = Jsoup.connect(url).get();
             org.jsoup.select.Elements rows = doc.select("tr");
-            Set<String> skyIDs = new HashSet<>();
+            List<Course>currentCourses =  courserp.findAll();
+            Set<String> currentSkyIDs =new HashSet<>();
+            for (Course c : currentCourses){
+                currentSkyIDs.add(c.getSkyid());
+            }
+
             for(org.jsoup.nodes.Element row :rows)
             {
                 org.jsoup.select.Elements columns = row.select("td");
 
                 if (columns.size()==10) {
                     String skyID = columns.get(0).text();
-                    if(!skyIDs.contains(skyID)) {
+                    if(!currentSkyIDs.contains(skyID)) {
                         Course course = new Course();
-                        course.setCourseSkyID(skyID);
-                        skyIDs.add(skyID);
-                        course.setCourseName(columns.get(1).text());
-                        course.setCourseType(columns.get(2).text());
-                        course.setCourseSection(columns.get(3).text());
-                        course.setCourseCapacity(columns.get(4).text());
-                        course.setCourseTime(columns.get(5).text());
-                        course.setCourseRoom(columns.get(6).text());
-                        course.setCourseInstructor(columns.get(7).text());
-                        course.setCourseFinal(columns.get(8).text());
+                        course.setSkyid(skyID);
+                        currentSkyIDs.add(skyID);
+                        course.setName(columns.get(1).text());
+                        course.setType(columns.get(2).text());
+                        course.setSection(columns.get(3).text());
+                        course.setCapacity(columns.get(4).text());
+                        course.setTime(columns.get(5).text());
+                        course.setRoom(columns.get(6).text());
+                        course.setInstructor(columns.get(7).text());
+                        course.setFinaltime(columns.get(8).text());
                         course.setRemark(columns.get(9).text().trim());
+                        course.setTermid(termid);
                         courserp.save(course);
                     }
                 }

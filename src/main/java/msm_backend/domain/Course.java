@@ -7,121 +7,133 @@ import javax.validation.constraints.Size;
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int CourseId;
+    private int courseid;
     @Column(unique=true)
-    private String CourseSkyID;
-    private String CourseName;
-    private String CourseType;
-    private String CourseSection;
-    private String CourseCapacity;
-    private String CourseTime;
-    private String CourseDuration;
-    private String CourseRoom;
-    private String CourseInstructor;
-    private String CourseFinal;
-    private String Remark;
-    public int getCourseId(){
-        return this.CourseId;
-    }
+    private String skyid;
+    private String name;
+    private String type;
+    private String section;
+    private String capacity;
+    private String time;
+    private String duration;
+    private String room;
+    private String instructor;
+    private String finaltime;
+    private String remark;
+    private String termid;
 
-    public void setCourseId(int courseId) {
-        this.CourseId = courseId;
-    }
-
-    public String getCourseName() {
-        return this.CourseName;
-    }
-
-    public void setCourseName(String courseName) {
-        this.CourseName = courseName;
-    }
 
     public Course(int id, String name){
         super();
-        this.CourseId = id;
-        this.CourseName = name;
+        this.courseid = id;
+        this.name = name;
     }
     public Course(){
         super();
     }
 
-    public String getCourseType() {
-        return CourseType;
+
+    public String getSkyid() {
+        return skyid;
     }
 
-    public void setCourseType(String courseType) {
-        CourseType = courseType;
+    public void setSkyid(String skyid) {
+        this.skyid = skyid;
     }
 
-    public String getCourseSection() {
-        return CourseSection;
+    public String getName() {
+        return name;
     }
 
-    public void setCourseSection(String courseSection) {
-        CourseSection = courseSection;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getCourseCapacity() {
-        return CourseCapacity;
+    public String getType() {
+        return type;
     }
 
-    public void setCourseCapacity(String courseCapacity) {
-        CourseCapacity = courseCapacity;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public String getCourseTime() {
-        return CourseTime;
+    public String getSection() {
+        return section;
     }
 
-    public void setCourseTime(String courseTime) {
-        CourseTime = courseTime;
+    public void setSection(String section) {
+        this.section = section;
     }
 
-    public String getCourseDuration() {
-        return CourseDuration;
+    public String getCapacity() {
+        return capacity;
     }
 
-    public void setCourseDuration(String courseDuration) {
-        CourseDuration = courseDuration;
+    public void setCapacity(String capacity) {
+        this.capacity = capacity;
     }
 
-    public String getCourseRoom() {
-        return CourseRoom;
+    public String getTime() {
+        return time;
     }
 
-    public void setCourseRoom(String courseRoom) {
-        CourseRoom = courseRoom;
+    public void setTime(String time) {
+        this.time = time;
     }
 
-    public String getCourseInstructor() {
-        return CourseInstructor;
+    public String getDuration() {
+        return duration;
     }
 
-    public void setCourseInstructor(String courseInstructor) {
-        CourseInstructor = courseInstructor;
+    public void setDuration(String duration) {
+        this.duration = duration;
     }
 
-    public String getCourseFinal() {
-        return CourseFinal;
+    public String getRoom() {
+        return room;
     }
 
-    public void setCourseFinal(String courseFinal) {
-        CourseFinal = courseFinal;
+    public void setRoom(String room) {
+        this.room = room;
+    }
+
+    public String getInstructor() {
+        return instructor;
+    }
+
+    public void setInstructor(String instructor) {
+        this.instructor = instructor;
+    }
+
+    public String getFinaltime() {
+        return finaltime;
+    }
+
+    public void setFinaltime(String finaltime) {
+        this.finaltime = finaltime;
     }
 
     public String getRemark() {
-        return Remark;
+        return remark;
     }
 
     public void setRemark(String remark) {
-        Remark = remark;
+        this.remark = remark;
     }
 
-    public String getCourseSkyID() {
-        return CourseSkyID;
+    public int getCourseid() {
+        return courseid;
     }
 
-    public void setCourseSkyID(String courseSkyID) {
-        CourseSkyID = courseSkyID;
+    public void setCourseid(int courseid) {
+        this.courseid = courseid;
+    }
+
+    public String getTermid() {
+        return termid;
+    }
+
+    public void setTermid(String termid) {
+        this.termid = termid;
     }
 }

@@ -14,7 +14,7 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long UserId;
+    private long userid;
 
     @NotNull
     @Size(max = 20)
@@ -51,12 +51,12 @@ public class User {
         super();
     }
 
-    public long getUserId() {
-        return UserId;
+    public long getUserid() {
+        return userid;
     }
 
-    public void setUserId(long userId) {
-        UserId = userId;
+    public void setUserid(long userId) {
+        this.userid= userId;
     }
 
 

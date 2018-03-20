@@ -4,8 +4,10 @@ import msm_backend.domain.Course;
 import msm_backend.domain.Plan;
 //import msm_backend.domain.PlanCourse;
 import msm_backend.domain.User;
+import msm_backend.repo.CourseRepo;
 import msm_backend.repo.PlanRepo;
 import msm_backend.repo.UserRepo;
+import msm_backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 //@CrossOrigin(origins = "http://localhost:3000")
@@ -29,6 +29,12 @@ public class UserController {
     private UserRepo userrp;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
+    private CourseRepo courserp;
+
+    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
@@ -39,14 +45,42 @@ public class UserController {
         }};
         return ResponseEntity.ok(ret);
     }
+    @PostMapping("/validname")
+    public ResponseEntity validname(@RequestParam("username") String username){
+        if(userrp.findOneByName(username)!=null){
+            return ResponseEntity.ok("invalid");
+        }
+        else{
+            return ResponseEntity.ok("valid");
+        }
+    }
 
-    @RequestMapping(value="/register/{username}/{email}/{password}", method=RequestMethod.POST)
-    @ResponseBody
-    void register(@PathVariable("username") String username,
-                @PathVariable("email") String email,
-                @PathVariable("password") String password ){
+    @PostMapping("/validemail")
+    public ResponseEntity validemail(@RequestParam("email") String email){
+        if(userrp.findByEmail(email)!=null){
+            return ResponseEntity.ok("invalid");
+        }
+        else{
+            return ResponseEntity.ok("valid");
+        }
+    }
+
+
+    @PostMapping("/register")
+    public ResponseEntity register(@RequestParam("username") String username,
+                                    @RequestParam("email") String email,
+                                    @RequestParam("password") String password ){
+        if(userrp.findOneByName(username)!=null || userrp.findByEmail(email)!=null){
+            return ResponseEntity.badRequest().body("username or email is taken");
+        }
         User newUser = new User(username, email, bCryptPasswordEncoder.encode(password));
-        userrp.save(newUser);
+        userService.saveUser(newUser);
+        if(userrp.findOneByName(username)!=null){
+            return ResponseEntity.ok("registered");
+        } else{
+            return ResponseEntity.badRequest().body("not registered");
+        }
+
     }
     @RequestMapping(value= "/clear")
     @ResponseBody
@@ -54,27 +88,50 @@ public class UserController {
         userrp.deleteAllInBatch();
     }
 
-
-    @RequestMapping(value="/addPlan/{username}/{courses}/", method=RequestMethod.POST)
+    @PostMapping("/addPlan")
     @ResponseBody
-    void addPlan(@PathVariable("username") String username,
-                  @PathVariable("courses") String courses){
-        User thisUser= null;
-        List<User> allUser = userrp.findAll();
-        for(User u: allUser){
-            if(u.getName().equals(username)){
-                thisUser = u;
-                break;
-            }
+    void addPlan(@RequestParam("username") String username,
+                 @RequestParam("courseskyid") String courseskyid,
+                 @RequestParam("planname") String planname ){
+        System.out.println(courseskyid);
+        System.out.println("hello");
+        Course thisCourse = courserp.findOneBySkyid(courseskyid);
+        System.out.println(thisCourse.getSkyid());
+        if(thisCourse ==null){
+            throw new NotFoundException();
         }
+        User thisUser= userrp.findOneByName(username);
+        System.out.println(thisUser.getUserid());
         if(thisUser == null){
             throw new NotFoundException();
         } else{
-            Plan newplan = new Plan(new Timestamp(System.currentTimeMillis()).toString());
+            System.out.println("sawadee");
+            List<Plan> planlst =planrp.findByUser(thisUser);
+            Plan thisplan = null;
+            for(Plan p: planlst){
+                if(p.getPlanNumber().equals(planname)){
+                    thisplan = p;
+                }
+            }
+            System.out.println("yo");
+            Set<Course> setCourse = new HashSet<Course>();
+            if(thisplan==null){
+                thisplan = new Plan();
+                thisplan.setPlanNumber(planname);
+
+            } else{
+                setCourse = thisplan.getCourses();
+            }
+            thisplan.setPlanDate(new Timestamp(System.currentTimeMillis()).toString());
+            setCourse.add(thisCourse);
+            thisplan.setCourses(setCourse);
+            thisplan.setUser(thisUser);
+            planrp.save(thisplan);
+
         }
 
-
     }
+
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(value= HttpStatus.NOT_MODIFIED, reason="fail to connect with open section")
     void handleNotFoundException(CourseController.IOException err){
