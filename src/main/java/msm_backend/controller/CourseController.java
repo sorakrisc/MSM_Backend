@@ -34,6 +34,7 @@ public class CourseController {
     @RequestMapping("/findall")
     @ResponseBody
     public List<Course> findall() {
+        System.out.println(rp.findAll());
         return rp.findAll();
     }
 

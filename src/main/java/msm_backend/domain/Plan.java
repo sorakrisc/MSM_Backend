@@ -1,5 +1,7 @@
 package msm_backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -7,38 +9,25 @@ import java.util.Set;
 public class Plan {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int PlanId;
-    private String PlanDate;
+    private int planid;
+    private String plandate;
 
-    private String PlanNumber;
+    private String plannumber;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userid", nullable = false)
+    @JsonBackReference
     private User user;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "plan_course", joinColumns = @JoinColumn(name = "plan_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
+    @JoinTable(name = "plancourse", joinColumns = @JoinColumn(name = "planid"), inverseJoinColumns = @JoinColumn(name = "courseid"))
     private Set<Course> courses;
 
-    public int getPlanId() {
-        return PlanId;
-    }
 
-    public void setPlanId(int planId) {
-        PlanId = planId;
-    }
-
-    public String getPlanDate() {
-        return PlanDate;
-    }
-
-    public void setPlanDate(String planDate) {
-        PlanDate = planDate;
-    }
 
     public Plan(String number,String date){
         super();
-        this.PlanDate = date;
-        this.PlanNumber = number;
+        this.plandate = date;
+        this.plannumber = number;
     }
     public Plan(){
         super();
@@ -60,11 +49,27 @@ public class Plan {
         this.courses = courses;
     }
 
-    public String getPlanNumber() {
-        return PlanNumber;
+    public int getPlanid() {
+        return planid;
     }
 
-    public void setPlanNumber(String planNumber) {
-        PlanNumber = planNumber;
+    public void setPlanid(int planid) {
+        this.planid = planid;
+    }
+
+    public String getPlandate() {
+        return plandate;
+    }
+
+    public void setPlandate(String plandate) {
+        this.plandate = plandate;
+    }
+
+    public String getPlannumber() {
+        return plannumber;
+    }
+
+    public void setPlannumber(String plannumber) {
+        this.plannumber = plannumber;
     }
 }

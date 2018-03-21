@@ -66,6 +66,12 @@ public class UserController {
     }
 
 
+    @GetMapping("/getplan")
+    @ResponseBody
+    public List<Plan> getplan(Authentication auth){
+        System.out.println(planrp.findByUser(userrp.findOneByName((String)auth.getPrincipal())));
+        return planrp.findByUser(userrp.findOneByName((String)auth.getPrincipal()));
+    }
     @PostMapping("/register")
     public ResponseEntity register(@RequestParam("username") String username,
                                     @RequestParam("email") String email,
@@ -82,53 +88,61 @@ public class UserController {
         }
 
     }
+
     @RequestMapping(value= "/clear")
     @ResponseBody
     void clear(){
         userrp.deleteAllInBatch();
     }
 
-    @PostMapping("/addPlan")
+    public Plan findPlan(User thisUser, String planname){
+        List<Plan> thisPlan = planrp.findByUser(thisUser);
+        for(Plan p: thisPlan){
+            if(p.getPlannumber().equals(planname)){
+                return p;
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/removeCourseInPlan")
     @ResponseBody
-    void addPlan(@RequestParam("username") String username,
-                 @RequestParam("courseskyid") String courseskyid,
-                 @RequestParam("planname") String planname ){
-        System.out.println(courseskyid);
-        System.out.println("hello");
+    void removeCourseToPlan(Authentication auth,
+                            @RequestParam("courseskyid") String courseskyid,
+                            @RequestParam("planname") String planname) throws NotFoundException{
+        String username = (String) auth.getPrincipal();
+        User thisUser = userrp.findOneByName(username);
         Course thisCourse = courserp.findOneBySkyid(courseskyid);
-        System.out.println(thisCourse.getSkyid());
-        if(thisCourse ==null){
-            throw new NotFoundException();
-        }
+        Plan thisPlan = findPlan(thisUser, planname);
+        thisPlan.getCourses().remove(thisCourse);
+        thisPlan.setPlandate(new Timestamp(System.currentTimeMillis()).toString());
+        planrp.save(thisPlan);
+
+    }
+
+    @PostMapping("/addCourseToPlan")
+    @ResponseBody
+    void addCourseToPlan(@RequestParam("courseskyid") String courseskyid,
+                 @RequestParam("planname") String planname, Authentication auth ){
+        Course thisCourse = courserp.findOneBySkyid(courseskyid);
+        String username = (String) auth.getPrincipal();
         User thisUser= userrp.findOneByName(username);
-        System.out.println(thisUser.getUserid());
-        if(thisUser == null){
-            throw new NotFoundException();
+        Plan thisplan = findPlan(thisUser, planname);
+        Set<Course> setCourse = new HashSet<Course>();
+        if(thisplan==null){
+            thisplan = new Plan();
+            thisplan.setPlannumber(planname);
+
         } else{
-            System.out.println("sawadee");
-            List<Plan> planlst =planrp.findByUser(thisUser);
-            Plan thisplan = null;
-            for(Plan p: planlst){
-                if(p.getPlanNumber().equals(planname)){
-                    thisplan = p;
-                }
-            }
-            System.out.println("yo");
-            Set<Course> setCourse = new HashSet<Course>();
-            if(thisplan==null){
-                thisplan = new Plan();
-                thisplan.setPlanNumber(planname);
-
-            } else{
-                setCourse = thisplan.getCourses();
-            }
-            thisplan.setPlanDate(new Timestamp(System.currentTimeMillis()).toString());
-            setCourse.add(thisCourse);
-            thisplan.setCourses(setCourse);
-            thisplan.setUser(thisUser);
-            planrp.save(thisplan);
-
+            setCourse = thisplan.getCourses();
         }
+        thisplan.setPlandate(new Timestamp(System.currentTimeMillis()).toString());
+        setCourse.add(thisCourse);
+        thisplan.setCourses(setCourse);
+        thisplan.setUser(thisUser);
+        planrp.save(thisplan);
+
+
 
     }
 
