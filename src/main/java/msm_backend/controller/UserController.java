@@ -120,10 +120,7 @@ public class UserController {
 
     }
 
-    @PostMapping("/addCourseToPlan")
-    @ResponseBody
-    void addCourseToPlan(@RequestParam("courseskyid") String courseskyid,
-                 @RequestParam("planname") String planname, Authentication auth ){
+    void addCourseToPlanHelper(String courseskyid, String planname, Authentication auth){
         Course thisCourse = courserp.findOneBySkyid(courseskyid);
         String username = (String) auth.getPrincipal();
         User thisUser= userrp.findOneByName(username);
@@ -143,7 +140,21 @@ public class UserController {
         planrp.save(thisplan);
 
 
+    }
+    @PostMapping("/addCourseToPlan")
+    @ResponseBody
+    void addCourseToPlan(@RequestParam("courseskyid") String courseskyid,
+                 @RequestParam("planname") String planname, Authentication auth ){
+        addCourseToPlanHelper(courseskyid, planname, auth);
 
+    }
+    @PostMapping("/addCoursesToPlan")
+    @ResponseBody
+    void addCoursesToPlan(@RequestParam("courseskyid") List<Course> courses,
+                          @RequestParam("planname") String planname, Authentication auth ){
+        for(Course course: courses){
+            addCourseToPlanHelper(course.getSkyid(),planname, auth);
+        }
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -154,5 +165,5 @@ public class UserController {
         private static final long serialVersionUID = 1L;
     }
 
-
+    void donothing(){}
 }
