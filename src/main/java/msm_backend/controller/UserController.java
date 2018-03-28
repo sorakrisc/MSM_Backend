@@ -65,7 +65,6 @@ public class UserController {
         }
     }
 
-
     @GetMapping("/getplan")
     @ResponseBody
     public List<Plan> getplan(Authentication auth){
