@@ -149,11 +149,11 @@ public class UserController {
     }
     @PostMapping("/addCoursesToPlan")
     @ResponseBody
-    void addCoursesToPlan(@RequestBody() Map<String,Map<String,String>> courses,
+    void addCoursesToPlan(@RequestBody() List<Course> courses,
                           @RequestParam("planname") String planname, Authentication auth ){
-        for(Map.Entry<String, Map<String, String>> courseMap: courses.entrySet()){
-            Map<String, String> course =courseMap.getValue();
-            addCourseToPlanHelper(course.get("courseskyid"),planname, auth);
+        for(Course course:courses){
+            System.out.println(course.getSkyid());
+            addCourseToPlanHelper(course.getSkyid(),planname, auth);
         }
     }
 
