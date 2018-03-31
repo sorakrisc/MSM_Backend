@@ -21,6 +21,8 @@ public class User {
     @Column(unique = true)
     private String name;
 
+
+
     @Column(name = "email")
     @Email(message = "*Please provide a valid Email")
     @NotEmpty(message = "*Please provide an email")

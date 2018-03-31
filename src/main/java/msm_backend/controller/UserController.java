@@ -94,15 +94,6 @@ public class UserController {
         userrp.deleteAllInBatch();
     }
 
-    public Plan findPlan(User thisUser, String planname){
-        List<Plan> thisPlan = planrp.findByUser(thisUser);
-        for(Plan p: thisPlan){
-            if(p.getPlannumber().equals(planname)){
-                return p;
-            }
-        }
-        return null;
-    }
 
     @PostMapping("/removeCourseInPlan")
     @ResponseBody
@@ -147,14 +138,59 @@ public class UserController {
         addCourseToPlanHelper(courseskyid, planname, auth);
 
     }
-    @PostMapping("/addCoursesToPlan")
-    @ResponseBody
-    void addCoursesToPlan(@RequestBody() List<Course> courses,
-                          @RequestParam("planname") String planname, Authentication auth ){
-        for(Course course:courses){
-            System.out.println(course.getSkyid());
-            addCourseToPlanHelper(course.getSkyid(),planname, auth);
+    public Plan findPlan(User thisUser, String planname){
+        List<Plan> thisPlan = planrp.findByUser(thisUser);
+        for(Plan p: thisPlan){
+            if(p.getPlannumber().equals(planname)){
+                return p;
+            }
         }
+        return null;
+    }
+
+    void addCoursesToPlanHelper(List<Course> courses, Plan plan){
+        plan.getCourses().addAll(courses);
+        planrp.save(plan);
+
+    }
+    void removeAllCoursesFromPlanHelper(Plan plan){
+        plan.getCourses().clear();
+        planrp.save(plan);
+    }
+    void generateNewPlan(Plan plan, User user, String planname){
+        plan = new Plan();
+        plan.setPlandate(new Timestamp(System.currentTimeMillis()).toString());
+        plan.setPlannumber(planname);
+        plan.setUser(user);
+        planrp.save(plan);
+    }
+
+    void saveCoursesToPlanHelper(List<Course> courses, String planname, String username){
+        User thisUser = userrp.findOneByName(username);
+        Plan thisPlan = findPlan(thisUser, planname);
+        if(thisPlan!=null){
+            removeAllCoursesFromPlanHelper(thisPlan);
+            addCoursesToPlanHelper(courses, thisPlan);
+        }
+        else {
+            generateNewPlan(thisPlan, thisUser, planname);
+        }
+    }
+    @PostMapping("/removeAllCoursesFromPlan")
+    @ResponseBody
+    void removeAllCoursesFromPlan(@RequestParam("planname") String planname, Authentication auth){
+        String username =(String) auth.getPrincipal();
+        User thisUser = userrp.findOneByName(username);
+        Plan thisPlan = findPlan(thisUser, planname);
+        removeAllCoursesFromPlanHelper(thisPlan);
+    }
+
+    @PostMapping("/saveCoursesToPlan")
+    @ResponseBody
+    void saveCoursesToPlan(@RequestBody() List<Course> courses,
+                          @RequestParam("planname") String planname, Authentication auth ){
+        String username = (String) auth.getPrincipal();
+        saveCoursesToPlanHelper(courses, planname, username);
     }
 
     @ExceptionHandler(NotFoundException.class)

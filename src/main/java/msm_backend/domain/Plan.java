@@ -18,7 +18,7 @@ public class Plan {
     @JsonBackReference
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "plancourse", joinColumns = @JoinColumn(name = "planid"), inverseJoinColumns = @JoinColumn(name = "courseid"))
     private Set<Course> courses;
 
