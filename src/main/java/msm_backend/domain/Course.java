@@ -19,6 +19,7 @@ public class Course {
     private String room;
     private String instructor;
     private String finaltime;
+    @Column(columnDefinition = "VARCHAR(500)")
     private String remark;
     private String termid;
 

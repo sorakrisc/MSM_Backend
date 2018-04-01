@@ -45,6 +45,8 @@ public class UserController {
         }};
         return ResponseEntity.ok(ret);
     }
+
+
     @PostMapping("/validname")
     public ResponseEntity validname(@RequestParam("username") String username){
         if(userrp.findOneByName(username)!=null){
@@ -80,6 +82,9 @@ public class UserController {
         }
         User newUser = new User(username, email, bCryptPasswordEncoder.encode(password));
         userService.saveUser(newUser);
+        generateNewPlan(newUser,"1");
+        generateNewPlan(newUser,"2");
+        generateNewPlan(newUser,"3");
         if(userrp.findOneByName(username)!=null){
             return ResponseEntity.ok("registered");
         } else{
@@ -157,8 +162,8 @@ public class UserController {
         plan.getCourses().clear();
         planrp.save(plan);
     }
-    void generateNewPlan(Plan plan, User user, String planname){
-        plan = new Plan();
+    void generateNewPlan(User user, String planname){
+        Plan plan = new Plan();
         plan.setPlandate(new Timestamp(System.currentTimeMillis()).toString());
         plan.setPlannumber(planname);
         plan.setUser(user);
@@ -173,7 +178,7 @@ public class UserController {
             addCoursesToPlanHelper(courses, thisPlan);
         }
         else {
-            generateNewPlan(thisPlan, thisUser, planname);
+            generateNewPlan(thisUser, planname);
         }
     }
     @PostMapping("/removeAllCoursesFromPlan")
@@ -200,6 +205,8 @@ public class UserController {
     class NotFoundException extends RuntimeException{
         private static final long serialVersionUID = 1L;
     }
+
+
 
     void donothing(){}
 }
