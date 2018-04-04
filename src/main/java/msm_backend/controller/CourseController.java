@@ -1,10 +1,7 @@
 package msm_backend.controller;
 
 
-import msm_backend.domain.Config;
-import msm_backend.domain.Course;
-import msm_backend.domain.Plan;
-import msm_backend.domain.User;
+import msm_backend.domain.*;
 import msm_backend.methods.SkyConnector;
 import msm_backend.repo.ConfigRepo;
 import msm_backend.repo.CourseRepo;
@@ -14,6 +11,7 @@ import org.hibernate.boot.jaxb.SourceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -21,6 +19,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/course")
@@ -35,6 +34,8 @@ public class CourseController {
     @Autowired
     private ConfigRepo configrp;
 
+    @Autowired
+    private UserRepo userrp;
     @RequestMapping("/findall")
     @ResponseBody
     public List<Course> findall() {
@@ -49,17 +50,26 @@ public class CourseController {
 
     @RequestMapping(value="/updatecourse/{id}", method=RequestMethod.POST)
     @ResponseBody
-    void update(@PathVariable("id") String id){
-        Config config = configrp.findOneByKey("recentterm");
-        config.setValue(id);
-        String openSectionUrl= "https://sky.muic.mahidol.ac.th/public/open_sections_by_course_tags?term_id="+id;
-        SkyConnector skyConnector = new SkyConnector();
-        boolean status = skyConnector.getOpenSectionCourses(openSectionUrl,rp, id);
-        if (status){
-            System.out.println("SUCESS GETOPENSECTION");
-        } else{
-            System.out.println("FAILED GETOPENSECTION");
-            throw new IOException();
+    public ResponseEntity update(@PathVariable("id") String id,Authentication auth){
+        String username = (String) auth.getPrincipal();
+        User user = userrp.findOneByName(username);
+        Set<Role> userRoles = user.getRoles();
+        if(userRoles.contains("admin")) {
+            Config config = configrp.findOneByKey("recentterm");
+            config.setValue(id);
+            String openSectionUrl = "https://sky.muic.mahidol.ac.th/public/open_sections_by_course_tags?term_id=" + id;
+            SkyConnector skyConnector = new SkyConnector();
+            boolean status = skyConnector.getOpenSectionCourses(openSectionUrl, rp, id);
+            if (status) {
+                System.out.println("SUCESS GETOPENSECTION");
+                return ResponseEntity.ok("success");
+            } else {
+                System.out.println("FAILED GETOPENSECTION");
+                throw new IOException();
+            }
+        }
+        else {
+            return ResponseEntity.badRequest().body("admin access only");
         }
     }
 
