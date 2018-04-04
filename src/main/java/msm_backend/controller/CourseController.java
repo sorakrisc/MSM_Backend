@@ -1,10 +1,12 @@
 package msm_backend.controller;
 
 
+import msm_backend.domain.Config;
 import msm_backend.domain.Course;
 import msm_backend.domain.Plan;
 import msm_backend.domain.User;
 import msm_backend.methods.SkyConnector;
+import msm_backend.repo.ConfigRepo;
 import msm_backend.repo.CourseRepo;
 import msm_backend.repo.PlanRepo;
 import msm_backend.repo.UserRepo;
@@ -30,6 +32,8 @@ public class CourseController {
     @Autowired
     private PlanRepo planrp;
 
+    @Autowired
+    private ConfigRepo configrp;
 
     @RequestMapping("/findall")
     @ResponseBody
@@ -38,10 +42,16 @@ public class CourseController {
         return rp.findAll();
     }
 
+    @PostMapping("/findCourseWithTermId/")
+    public List<Course> getcourseid(@RequestParam("termid") String termid){
+        return rp.findByTermid(termid);
+    }
+
     @RequestMapping(value="/updatecourse/{id}", method=RequestMethod.POST)
     @ResponseBody
     void update(@PathVariable("id") String id){
-
+        Config config = configrp.findOneByKey("recentterm");
+        config.setValue(id);
         String openSectionUrl= "https://sky.muic.mahidol.ac.th/public/open_sections_by_course_tags?term_id="+id;
         SkyConnector skyConnector = new SkyConnector();
         boolean status = skyConnector.getOpenSectionCourses(openSectionUrl,rp, id);

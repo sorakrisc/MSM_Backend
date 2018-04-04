@@ -40,8 +40,12 @@ public class UserController {
 
     @GetMapping("/whoami")
     public ResponseEntity whoami(Authentication auth){
+        String username = (String) auth.getPrincipal();
+        User user = userrp.findOneByName(username);
+
         Map<String, String> ret = new HashMap<String, String>(){{
-            put("user", (String) auth.getPrincipal());
+            put("user",  username);
+            put("role",  user.getRoles().toString());
         }};
         return ResponseEntity.ok(ret);
     }
