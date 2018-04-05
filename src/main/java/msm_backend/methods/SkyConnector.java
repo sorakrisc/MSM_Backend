@@ -15,7 +15,6 @@ public class SkyConnector {
 
     public boolean getOpenSectionCourses(String url, CourseRepo courserp, String termid){
         try {
-            System.out.println("connecting to skyos");
             org.jsoup.nodes.Document doc = Jsoup.connect(url).get();
             org.jsoup.select.Elements rows = doc.select("tr");
             List<Course>currentCourses =  courserp.findAll();
@@ -51,7 +50,6 @@ public class SkyConnector {
             }
             return true;
         } catch (IOException e){
-            System.out.println(e);
             return false;
         }
 

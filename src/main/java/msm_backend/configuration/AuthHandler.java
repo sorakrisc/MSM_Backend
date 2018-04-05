@@ -23,9 +23,6 @@ public class AuthHandler implements AuthenticationProvider {
 
         // Check with Database
 
-        System.out.println("username: "+username);
-        System.out.println("password: "+password);
-
         if (userService.authenticate(username, password)){
             return new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
         }

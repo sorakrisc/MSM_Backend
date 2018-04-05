@@ -80,7 +80,6 @@ public class UserController {
     @GetMapping("/getplan")
     @ResponseBody
     public List<Plan> getplan(Authentication auth){
-        System.out.println(planrp.findByUser(userrp.findOneByName((String)auth.getPrincipal())));
         return planrp.findByUser(userrp.findOneByName((String)auth.getPrincipal()));
     }
     @PostMapping("/register")

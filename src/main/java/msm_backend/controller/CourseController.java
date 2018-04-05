@@ -36,7 +36,6 @@ public class CourseController {
     @RequestMapping("/findall")
     @ResponseBody
     public List<Course> findall() {
-        System.out.println(rp.findAll());
         return rp.findAll();
     }
 
@@ -62,10 +61,8 @@ public class CourseController {
             SkyConnector skyConnector = new SkyConnector();
             boolean status = skyConnector.getOpenSectionCourses(openSectionUrl, rp, id);
             if (status) {
-                System.out.println("SUCESS GETOPENSECTION");
                 return ResponseEntity.ok("success");
             } else {
-                System.out.println("FAILED GETOPENSECTION");
                 throw new IOException();
             }
         }
