@@ -3,6 +3,7 @@ package msm_backend.controller;
 import msm_backend.domain.Course;
 import msm_backend.domain.Plan;
 //import msm_backend.domain.PlanCourse;
+import msm_backend.domain.Role;
 import msm_backend.domain.User;
 import msm_backend.repo.CourseRepo;
 import msm_backend.repo.PlanRepo;
@@ -42,10 +43,16 @@ public class UserController {
     public ResponseEntity whoami(Authentication auth){
         String username = (String) auth.getPrincipal();
         User user = userrp.findOneByName(username);
-
+        Set<Role> roles = user.getRoles();
+        StringBuilder temp= new StringBuilder();
+        temp.append("[");
+        for( Role eachRoles : roles){
+             temp.append( eachRoles.getRole());
+        }
+        temp.append("]");
         Map<String, String> ret = new HashMap<String, String>(){{
             put("user",  username);
-            put("role",  user.getRoles().toString());
+            put("role",  temp.toString());
         }};
         return ResponseEntity.ok(ret);
     }
