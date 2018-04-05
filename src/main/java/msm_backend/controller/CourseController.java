@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/course")
@@ -54,7 +51,11 @@ public class CourseController {
         String username = (String) auth.getPrincipal();
         User user = userrp.findOneByName(username);
         Set<Role> userRoles = user.getRoles();
-        if(userRoles.contains("admin")) {
+        Set<String> setRole = new HashSet<>();
+        for (Role echRole: userRoles){
+            setRole.add(echRole.getRole());
+        }
+        if(setRole.contains("admin")) {
             Config config = configrp.findOneByKey("recentterm");
             config.setValue(id);
             String openSectionUrl = "https://sky.muic.mahidol.ac.th/public/open_sections_by_course_tags?term_id=" + id;
