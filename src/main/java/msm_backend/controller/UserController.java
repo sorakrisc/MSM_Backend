@@ -44,15 +44,14 @@ public class UserController {
         String username = (String) auth.getPrincipal();
         User user = userrp.findOneByName(username);
         Set<Role> roles = user.getRoles();
-        StringBuilder temp= new StringBuilder();
-        temp.append("[");
-        for( Role eachRoles : roles){
-             temp.append( eachRoles.getRole());
-        }
-        temp.append("]");
-        Map<String, String> ret = new HashMap<String, String>(){{
+//        StringBuilder temp= new StringBuilder();
+//        for( Role eachRoles : roles){
+//             temp.append( eachRoles.getRole());
+//        }
+        Map<String, Object> ret = new HashMap<String, Object>(){{
             put("user",  username);
-            put("role",  temp.toString());
+//            put("role",  temp.toString());
+            put("role", roles);
         }};
         return ResponseEntity.ok(ret);
     }
